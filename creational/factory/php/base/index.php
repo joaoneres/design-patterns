@@ -1,110 +1,41 @@
-<!DOCTYPE HTML>
-<html>
+<?php
 
-<head>
-	<style>
-		.error {
-			color: #FF0000;
-		}
-	</style>
-</head>
+require_once 'Factories/CarFactory.php';
+require_once 'Factories/TruckFactory.php';
+require_once 'Factories/TransportFactory.php';
 
-<body>
+class UsingAbstractFactory
+{
+  public TransportFactory $transportFactory;
 
-	<?php
-	// define variables and set to empty values
-	$nameErr = $emailErr = $genderErr = $websiteErr = "";
-	$name = $email = $gender = $comment = $website = "";
+  public function __construct()
+  {
+    $this->transportFactory = new CarFactory();
+  }
 
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		if (empty($_POST["name"])) {
-			$nameErr = "Name is required";
-		} else {
-			$name = test_input($_POST["name"]);
-			// check if name only contains letters and whitespace
-			if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
-				$nameErr = "Only letters and white space allowed";
-			}
-		}
+  public function process()
+  {
+    $car = $this->transportFactory->createTransport('Mercedes', 'AAA-000', -5, 7);
+    return $car->name;
+  }
+}
 
-		if (empty($_POST["email"])) {
-			$emailErr = "Email is required";
-		} else {
-			$email = test_input($_POST["email"]);
-			// check if e-mail address is well-formed
-			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-				$emailErr = "Invalid email format";
-			}
-		}
+$carFactory = new CarFactory();
+$truckFactory = new TruckFactory();
 
-		if (empty($_POST["website"])) {
-			$website = "";
-		} else {
-			$website = test_input($_POST["website"]);
-			// check if URL address syntax is valid (this regular expression also allows dashes in the URL)
-			if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $website)) {
-				$websiteErr = "Invalid URL";
-			}
-		}
+$mercedesCar = $carFactory->createTransport('Mercedes', 'AAA-000', -5, 7);
+$fiatCar = $carFactory->createTransport('Fiat', 'BBB-A0A', 13, 15);
 
-		if (empty($_POST["comment"])) {
-			$comment = "";
-		} else {
-			$comment = test_input($_POST["comment"]);
-		}
+$scaniaTruck = $truckFactory->createTransport('Scania', '1123338-AAACVV-AA', 40, 19);
+$volvoTruck = $truckFactory->createTransport('Volvo', '3492304-SSSIVV-ZZ', 85, 16);
 
-		if (empty($_POST["gender"])) {
-			$genderErr = "Gender is required";
-		} else {
-			$gender = test_input($_POST["gender"]);
-		}
-	}
+echo 'O carro '.$mercedesCar->name.' de referência '.$mercedesCar->reference.' está na posição x = '.$mercedesCar->currentPosition.' e possui o rendimento de '.$mercedesCar->efficiencyPerMinute.' posições por minuto. <br>';
+echo 'O carro '.$fiatCar->name.' de referência '.$fiatCar->reference.' está na posição x = '.$fiatCar->currentPosition.' e possui o rendimento de '.$fiatCar->efficiencyPerMinute.' posições por minuto. <br> <br>';
 
-	function test_input($data)
-	{
-		$data = trim($data);
-		$data = stripslashes($data);
-		$data = htmlspecialchars($data);
-		return $data;
-	}
-	?>
+echo 'O caminhão '.$scaniaTruck->name.' de referência '.$scaniaTruck->reference.' está na posição x = '.$scaniaTruck->currentPosition.' e possui o rendimento de '.$scaniaTruck->efficiencyPerMinute.' posições por minuto. <br>';
+echo 'O caminhão '.$volvoTruck->name.' de referência '.$volvoTruck->reference.' está na posição x = '.$volvoTruck->currentPosition.' e possui o rendimento de '.$volvoTruck->efficiencyPerMinute.' posições por minuto. <br>';
 
-	<h2>PHP Form Validation Example</h2>
-	<p><span class="error">* required field</span></p>
-	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-		Name: <input type="text" name="name" value="<?php echo $name; ?>">
-		<span class="error">* <?php echo $nameErr; ?></span>
-		<br><br>
-		E-mail: <input type="text" name="email" value="<?php echo $email; ?>">
-		<span class="error">* <?php echo $emailErr; ?></span>
-		<br><br>
-		Website: <input type="text" name="website" value="<?php echo $website; ?>">
-		<span class="error"><?php echo $websiteErr; ?></span>
-		<br><br>
-		Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment; ?></textarea>
-		<br><br>
-		Gender:
-		<input type="radio" name="gender" <?php if (isset($gender) && $gender == "female") echo "checked"; ?> value="female">Female
-		<input type="radio" name="gender" <?php if (isset($gender) && $gender == "male") echo "checked"; ?> value="male">Male
-		<input type="radio" name="gender" <?php if (isset($gender) && $gender == "other") echo "checked"; ?> value="other">Other
-		<span class="error">* <?php echo $genderErr; ?></span>
-		<br><br>
-		<input type="submit" name="submit" value="Submit">
-	</form>
+$instanceOfUsingAbstractFactory = new UsingAbstractFactory();
+$carName = $instanceOfUsingAbstractFactory->process();
 
-	<?php
-	echo "<h2>Your Input:</h2>";
-	echo $name;
-	echo "<br>";
-	echo $email;
-	echo "<br>";
-	echo $website;
-	echo "<br>";
-	echo $comment;
-	echo "<br>";
-	echo $gender;
-	?>
-
-</body>
-
-</html>
+echo 'Car name: '.$carName;
