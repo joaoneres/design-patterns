@@ -7,3 +7,4 @@
 <p>À primeira vista, essa mudança pode parecer inútil: acabamos de mover a chamada do construtor de uma parte do programa para outra. No entanto, considere o seguinte: agora você pode substituir o método fábrica em uma subclasse e alterar a classe de produtos que está sendo criada pelo método.</p>
 
 <p>No entanto, há uma pequena limitação: as subclasses podem retornar diferentes tipos de produtos somente se esses produtos tiverem uma classe base ou interface comum. Além disso, o método fábrica na classe base deve ter seu tipo de retorno declarado como essa interface.</p>
+
